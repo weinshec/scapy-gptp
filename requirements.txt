@@ -1,4 +1,4 @@
+coverage
+pytest
 scapy[basic]
-numpy
-matplotlib
-scipy
+tox
