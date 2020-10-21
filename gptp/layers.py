@@ -1,8 +1,9 @@
 from scapy.fields import BitEnumField, ByteField, ConditionalField, FlagsField, LongField, \
-    ShortField, SignedByteField, XBitField, XByteField
+    ShortField, SignedByteField, XBitField, XByteField, XStrFixedLenField
 from scapy.layers.l2 import Ether, Dot1Q
 from scapy.packet import Packet, bind_layers
-from .fields import PortIdField, ReservedField, TimestampField, TLVField
+
+from .fields import PortIdentityField, TimestampField
 
 
 class PTP(Packet):
@@ -30,33 +31,33 @@ class PTP(Packet):
         XBitField("version", 2, 4),
         ShortField("length", 34),
         ByteField("domain", 0),
-        ReservedField("reserved1", 0, 1),
+        XStrFixedLenField("reserved1", 0, 1),
         FlagsField("flags", 0, 16, FLAGS),
         LongField("correct", 0),
-        ReservedField("reserved2", 0, 4),
-        PortIdField("srcPortId", 0),
+        XStrFixedLenField("reserved2", 0, 4),
+        PortIdentityField("srcPortId", 0),
         ShortField("seqId", 0),
         XByteField("control", 0),
         SignedByteField("logMsgInt", -3),
 
         # Sync
-        ConditionalField(ReservedField("reserved3", 0, 10), lambda pkt:pkt.is_sync),
+        ConditionalField(XStrFixedLenField("reserved3", 0, 10), lambda pkt:pkt.is_sync),
 
         # FollowUp
         ConditionalField(TimestampField("origTime", 0), lambda pkt:pkt.is_followup),
-        ConditionalField(TLVField("tlv", 0), lambda pkt:pkt.is_followup),
+        ConditionalField(XStrFixedLenField("tlv", 0), lambda pkt:pkt.is_followup),
 
         # PdelayReq
-        ConditionalField(ReservedField("reserved3", 0, 10), lambda pkt:pkt.is_pdelay_req),
-        ConditionalField(ReservedField("reserved4", 0, 10), lambda pkt:pkt.is_pdelay_req),
+        ConditionalField(XStrFixedLenField("reserved3", 0, 10), lambda pkt:pkt.is_pdelay_req),
+        ConditionalField(XStrFixedLenField("reserved4", 0, 10), lambda pkt:pkt.is_pdelay_req),
 
         # PdelayResp
         ConditionalField(TimestampField("rcptTime", 0), lambda pkt:pkt.is_pdelay_resp),
-        ConditionalField(PortIdField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp),
+        ConditionalField(PortIdentityField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp),
 
         # PdelayRespFollowUp
         ConditionalField(TimestampField("respTime", 0), lambda pkt:pkt.is_pdelay_resp_followup),
-        ConditionalField(PortIdField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp_followup),
+        ConditionalField(PortIdentityField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp_followup),
 
     ]
 
