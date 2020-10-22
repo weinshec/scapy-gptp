@@ -1,12 +1,12 @@
 from scapy.fields import BitEnumField, ByteField, ConditionalField, FlagsField, LongField, \
-    ShortField, SignedByteField, XBitField, XByteField, XStrFixedLenField
+    ShortField, SignedByteField, XBitField, XByteField, XStrFixedLenField, XIntField, BitField
 from scapy.layers.l2 import Ether, Dot1Q
 from scapy.packet import Packet, bind_layers
 
 from .fields import PortIdentityField, TimestampField
 
 
-class PTP(Packet):
+class PTPv2(Packet):
     name = "PTPv2"
 
     MSG_TYPES = {
@@ -25,68 +25,67 @@ class PTP(Packet):
     ]
 
     fields_desc = [
-        XBitField("transport", 1, 4),
-        BitEnumField("type", 0, 4, MSG_TYPES),
+        BitField("transportSpecific", 1, 4),
+        BitEnumField("messageType", 0, 4, MSG_TYPES),
         XBitField("reserved0", 0, 4),
-        XBitField("version", 2, 4),
-        ShortField("length", 34),
-        ByteField("domain", 0),
-        XStrFixedLenField("reserved1", 0, 1),
+        BitField("versionPTP", 0x2, 4),
+        ShortField("messageLength", 34),
+        ByteField("domainNumber", 0),
+        XByteField("reserved1", 0),
         FlagsField("flags", 0, 16, FLAGS),
-        LongField("correct", 0),
-        XStrFixedLenField("reserved2", 0, 4),
-        PortIdentityField("srcPortId", 0),
-        ShortField("seqId", 0),
+        LongField("correctionField", 0),
+        XIntField("reserved2", 0),
+        PortIdentityField("sourcePortIdentity", 0),
+        ShortField("sequenceId", 0),
         XByteField("control", 0),
-        SignedByteField("logMsgInt", -3),
+        SignedByteField("logMessageInterval", -3),
 
         # Sync
-        ConditionalField(XStrFixedLenField("reserved3", 0, 10), lambda pkt:pkt.is_sync),
+        ConditionalField(BitField("reserved3", 0, 80), lambda pkt:pkt.is_sync),
 
         # FollowUp
-        ConditionalField(TimestampField("origTime", 0), lambda pkt:pkt.is_followup),
-        ConditionalField(XStrFixedLenField("tlv", 0), lambda pkt:pkt.is_followup),
+        ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt:pkt.is_followup),
+        ConditionalField(XStrFixedLenField("informationTlv", 0, 32), lambda pkt:pkt.is_followup),
 
         # PdelayReq
-        ConditionalField(XStrFixedLenField("reserved3", 0, 10), lambda pkt:pkt.is_pdelay_req),
-        ConditionalField(XStrFixedLenField("reserved4", 0, 10), lambda pkt:pkt.is_pdelay_req),
+        ConditionalField(BitField("reserved3", 0, 80), lambda pkt:pkt.is_pdelay_req),
+        ConditionalField(BitField("reserved4", 0, 80), lambda pkt:pkt.is_pdelay_req),
 
         # PdelayResp
-        ConditionalField(TimestampField("rcptTime", 0), lambda pkt:pkt.is_pdelay_resp),
-        ConditionalField(PortIdentityField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp),
+        ConditionalField(TimestampField("requestReceiptTimestamp", 0), lambda pkt:pkt.is_pdelay_resp),
+        ConditionalField(PortIdentityField("requestingPortIdentity", 0), lambda pkt:pkt.is_pdelay_resp),
 
         # PdelayRespFollowUp
-        ConditionalField(TimestampField("respTime", 0), lambda pkt:pkt.is_pdelay_resp_followup),
-        ConditionalField(PortIdentityField("reqPortId", 0), lambda pkt:pkt.is_pdelay_resp_followup),
-
+        ConditionalField(TimestampField("responseOriginTimestamp", 0), lambda pkt:pkt.is_pdelay_resp_followup),
+        ConditionalField(PortIdentityField("requestingPortIdentity", 0), lambda pkt:pkt.is_pdelay_resp_followup),
     ]
 
     @property
     def is_sync(self):
-        return(self.type == 0x0)
+        return(self.messageType == 0x0)
 
     @property
     def is_followup(self):
-        return(self.type == 0x8)
+        return(self.messageType == 0x8)
 
     @property
     def is_pdelay_req(self):
-        return(self.type == 0x2)
+        return(self.messageType == 0x2)
 
     @property
     def is_pdelay_resp(self):
-        return(self.type == 0x3)
+        return(self.messageType == 0x3)
 
     @property
     def is_pdelay_resp_followup(self):
-        return(self.type == 0xA)
+        return(self.messageType == 0xA)
 
-    def extract_padding(self, s):
-        return "", s
+    # def extract_padding(self, s):
+    #     return "", s
 
-    def mysummary(self):
-        return self.sprintf("%type% %srcPortId% %seqId%")
+    # def mysummary(self):
+    #     return self.sprintf("%type% %srcPortId% %seqId%")
 
 
-bind_layers(Ether, Dot1Q, type=0x9100)
-bind_layers(Dot1Q, PTP, type=0x88f7)
+# bind_layers(Ether, Dot1Q, type=0x9100)
+# bind_layers(Dot1Q, PTP, type=0x88f7)
