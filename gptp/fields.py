@@ -45,6 +45,8 @@ class PortIdentityField(XStrFixedLenField):
         XStrFixedLenField.__init__(self, name, default, length=10)
 
     def i2h(self, pkt, val):
+        if val is None:
+            return "None"
         p = struct.unpack(self.encoding, val)
         return f"{p[0]:02x}:{p[1]:02x}:{p[2]:02x}:{p[5]:02x}:{p[6]:02x}:{p[7]:02x}/{p[8]}"
 

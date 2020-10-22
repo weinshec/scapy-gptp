@@ -41,31 +41,29 @@ class PTPv2(Packet):
         SignedByteField("logMessageInterval", -3),
 
         # Sync
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt:pkt.is_sync),
+        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_sync),
 
         # FollowUp
-        ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt:pkt.is_followup),
-        ConditionalField(XStrFixedLenField("informationTlv", 0, 32), lambda pkt:pkt.is_followup),
+        ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt: pkt.is_followup),
+        ConditionalField(XStrFixedLenField("informationTlv", 0, 32), lambda pkt: pkt.is_followup),
 
         # PdelayReq
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt:pkt.is_pdelay_req),
-        ConditionalField(BitField("reserved4", 0, 80), lambda pkt:pkt.is_pdelay_req),
+        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_pdelay_req),
+        ConditionalField(BitField("reserved4", 0, 80), lambda pkt: pkt.is_pdelay_req),
 
         # PdelayResp
         ConditionalField(
             TimestampField("requestReceiptTimestamp", 0),
-            lambda pkt:pkt.is_pdelay_resp),
-        ConditionalField(
-            PortIdentityField("requestingPortIdentity", 0),
-            lambda pkt:pkt.is_pdelay_resp),
+            lambda pkt: pkt.is_pdelay_resp),
 
         # PdelayRespFollowUp
         ConditionalField(
             TimestampField("responseOriginTimestamp", 0),
             lambda pkt:pkt.is_pdelay_resp_followup),
+
         ConditionalField(
             PortIdentityField("requestingPortIdentity", 0),
-            lambda pkt:pkt.is_pdelay_resp_followup),
+            lambda pkt: pkt.is_pdelay_resp or pkt.is_pdelay_resp_followup),
     ]
 
     @property
