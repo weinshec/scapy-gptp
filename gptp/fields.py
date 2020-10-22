@@ -28,7 +28,8 @@ class PortIdentityField(XStrFixedLenField):
         if len(mac_bytes) != 6:
             raise ValueError("Invalid MAC Address")
 
-        return struct.pack(cls.encoding,
+        return struct.pack(
+            cls.encoding,
             int(mac_bytes[0], 16),
             int(mac_bytes[1], 16),
             int(mac_bytes[2], 16),

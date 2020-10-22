@@ -1,6 +1,6 @@
-from scapy.fields import BitEnumField, ByteField, ConditionalField, FlagsField, LongField, \
-    ShortField, SignedByteField, XBitField, XByteField, XStrFixedLenField, XIntField, BitField
-from scapy.layers.l2 import Ether, Dot1Q
+from scapy.fields import BitEnumField, BitField, ByteField, ConditionalField, FlagsField, \
+        LongField, ShortField, SignedByteField, XBitField, XByteField, XIntField, XStrFixedLenField
+from scapy.layers.l2 import Ether
 from scapy.packet import Packet, bind_layers
 
 from .fields import PortIdentityField, TimestampField
@@ -52,12 +52,20 @@ class PTPv2(Packet):
         ConditionalField(BitField("reserved4", 0, 80), lambda pkt:pkt.is_pdelay_req),
 
         # PdelayResp
-        ConditionalField(TimestampField("requestReceiptTimestamp", 0), lambda pkt:pkt.is_pdelay_resp),
-        ConditionalField(PortIdentityField("requestingPortIdentity", 0), lambda pkt:pkt.is_pdelay_resp),
+        ConditionalField(
+            TimestampField("requestReceiptTimestamp", 0),
+            lambda pkt:pkt.is_pdelay_resp),
+        ConditionalField(
+            PortIdentityField("requestingPortIdentity", 0),
+            lambda pkt:pkt.is_pdelay_resp),
 
         # PdelayRespFollowUp
-        ConditionalField(TimestampField("responseOriginTimestamp", 0), lambda pkt:pkt.is_pdelay_resp_followup),
-        ConditionalField(PortIdentityField("requestingPortIdentity", 0), lambda pkt:pkt.is_pdelay_resp_followup),
+        ConditionalField(
+            TimestampField("responseOriginTimestamp", 0),
+            lambda pkt:pkt.is_pdelay_resp_followup),
+        ConditionalField(
+            PortIdentityField("requestingPortIdentity", 0),
+            lambda pkt:pkt.is_pdelay_resp_followup),
     ]
 
     @property
