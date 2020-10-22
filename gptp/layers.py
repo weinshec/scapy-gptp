@@ -80,12 +80,8 @@ class PTPv2(Packet):
     def is_pdelay_resp_followup(self):
         return(self.messageType == 0xA)
 
-    # def extract_padding(self, s):
-    #     return "", s
-
-    # def mysummary(self):
-    #     return self.sprintf("%type% %srcPortId% %seqId%")
+    def extract_padding(self, s):
+        return "", s
 
 
-# bind_layers(Ether, Dot1Q, type=0x9100)
-# bind_layers(Dot1Q, PTP, type=0x88f7)
+bind_layers(Ether, PTPv2, type=0x88F7)
