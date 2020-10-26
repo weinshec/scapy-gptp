@@ -95,3 +95,16 @@ class MatchedList:
     @property
     def pdelay(self):
         return self._pdelay
+
+    @property
+    def unmatched(self):
+        return {
+            "sync": self._unmatched_sync,
+            "followup": self._unmatched_fup,
+            "pdelay_req": self._unmatched_pdreq,
+            "pdelay_resp": self._unmatched_pdresp,
+            "pdelay_resp_followup": self._unmatched_pdresp_fup,
+        }
+
+    def __repr__(self):
+        return f"<MatchedList sync:{len(self.sync)} pdelay:{len(self.pdelay)}>"
