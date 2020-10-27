@@ -67,3 +67,7 @@ class MatchedListTest(unittest.TestCase):
                 pdreq_p2_seq25
             ])
             self.assertEqual(2, len(matcher.pdelay))
+
+    def test_initialization_with_iterable(self):
+        matcher = MatchedList([sync_p1_seq24, fup_p1_seq24])
+        self.assertEqual(1, len(matcher.sync))

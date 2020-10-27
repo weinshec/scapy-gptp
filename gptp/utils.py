@@ -15,7 +15,7 @@ def matching_pdelay(req, resp):
 
 class MatchedList:
 
-    def __init__(self):
+    def __init__(self, packets=[]):
         self._sync = []
         self._pdelay = []
 
@@ -24,6 +24,8 @@ class MatchedList:
         self._unmatched_pdreq = []
         self._unmatched_pdresp = []
         self._unmatched_pdresp_fup = []
+
+        self.add(packets)
 
     def add(self, pkt):
         if type(pkt) == PTPv2:
