@@ -59,7 +59,7 @@ from gptp.utils import MatchedList
 pcap = rdpcap("traces.pcap")
 matched_list = MatchedList([p for p in pcap if p.haslayer('PTPv2')])
 
-(sync, fup) = m.sync[0]
+(sync, fup) = matched_list.sync[0]
 assert sync.sequenceId == fup.sequenceId
 print(fup.preciseOriginTimestamp)  # prints 1602135835.0758622
 ```
