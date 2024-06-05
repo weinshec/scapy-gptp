@@ -2,14 +2,14 @@ from .layers import PTPv2
 
 
 def matching_sync(sync, fup):
-    matching_portIds = (sync.sourcePortIdentity == fup.sourcePortIdentity)
-    matching_seqIds = (sync.sequenceId == fup.sequenceId)
+    matching_portIds = sync.sourcePortIdentity == fup.sourcePortIdentity
+    matching_seqIds = sync.sequenceId == fup.sequenceId
     return matching_portIds and matching_seqIds
 
 
 def matching_pdelay(req, resp):
-    matching_portIds = (req.sourcePortIdentity == resp.requestingPortIdentity)
-    matching_seqIds = (req.sequenceId == resp.sequenceId)
+    matching_portIds = req.sourcePortIdentity == resp.requestingPortIdentity
+    matching_seqIds = req.sequenceId == resp.sequenceId
     return matching_portIds and matching_seqIds
 
 
@@ -66,7 +66,12 @@ class MatchedList:
                 for j, respfup in enumerate(self._unmatched_pdresp_fup):
                     if matching_pdelay(req, respfup):
                         self._pdelay.append(
-                            (req, self._unmatched_pdresp.pop(i), self._unmatched_pdresp_fup.pop(j)))
+                            (
+                                req,
+                                self._unmatched_pdresp.pop(i),
+                                self._unmatched_pdresp_fup.pop(j),
+                            )
+                        )
                         return
         self._unmatched_pdreq.append(req)
 
@@ -76,7 +81,12 @@ class MatchedList:
                 for j, respfup in enumerate(self._unmatched_pdresp_fup):
                     if matching_pdelay(req, respfup):
                         self._pdelay.append(
-                            (self._unmatched_pdreq.pop(i), resp, self._unmatched_pdresp_fup.pop(j)))
+                            (
+                                self._unmatched_pdreq.pop(i),
+                                resp,
+                                self._unmatched_pdresp_fup.pop(j),
+                            )
+                        )
                         return
         self._unmatched_pdresp.append(resp)
 
@@ -86,7 +96,12 @@ class MatchedList:
                 for j, resp in enumerate(self._unmatched_pdresp):
                     if matching_pdelay(req, resp):
                         self._pdelay.append(
-                            (self._unmatched_pdreq.pop(i), self._unmatched_pdresp.pop(j), resp_fup))
+                            (
+                                self._unmatched_pdreq.pop(i),
+                                self._unmatched_pdresp.pop(j),
+                                resp_fup,
+                            )
+                        )
                         return
         self._unmatched_pdresp_fup.append(resp_fup)
 

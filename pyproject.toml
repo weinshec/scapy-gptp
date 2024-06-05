@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "scapy-gptp"
+version = "1.0.0"
+description = "scapy layer definition and tools for GPTP (IEEE 802.1as)"
+authors = ["Christoph Weinsheimer <weinshec@holodeck2.de>"]
+license = "GPL-2.0"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["scapy", "PTP", "gPTP", "802.1as"]
+repository = "https://github.com/weinshec/scapy-gptp"
+packages = [
+    { include = "gptp" },
+]
+
+
+[tool.poetry.urls]
+"Homepage" = "https://github.com/weinshec/scapy-gptp"
+"Source" = "https://github.com/weinshec/scapy-gptp"
+"Issues" = "https://github.com/weinshec/scapy-gptp/issues"
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+scapy = {extras = ["basic"], version = "^2.5"}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+black = "^24.4.2"
+isort = "^5.13.2"
+mypy = "^1.10.0"
+
+
+[tool.isort]
+profile = "black"
+force_grid_wrap = 2
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
