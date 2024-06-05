@@ -1,9 +1,13 @@
 import unittest
-from scapy.layers.l2 import Ether, Dot1Q
+
+from scapy.layers.l2 import (
+    Dot1Q,
+    Ether,
+)
 
 from gptp.layers import PTPv2
 
-
+# fmt: off
 SYNC_MESSAGE_TRACE = [
     0x10,                                                        # majorSdoId + message type
     0xA2,                                                        # minorVersionPTP + PTP version
@@ -95,6 +99,7 @@ PDELAY_RESP_FOLLOW_UP_MESSAGE_TRACE = [
     0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02,  # responseOriginTimestamp
     0x66, 0x55, 0x44, 0xff, 0xfe, 0x33, 0x22, 0x12, 0x00, 0x01   # requestingPortIdentity
 ]
+# fmt: on
 
 
 class PTPv2LayerTest(unittest.TestCase):
@@ -111,7 +116,7 @@ class PTPv2LayerTest(unittest.TestCase):
         self.assertEqual(0x0208, p.flags)
         self.assertEqual(0x00, p.correctionField)
         self.assertEqual(0x12345678, p.messageTypeSpecific)
-        self.assertEqual('66:55:44:33:22:11/1', p.sourcePortIdentity)
+        self.assertEqual("66:55:44:33:22:11/1", p.sourcePortIdentity)
         self.assertEqual(0x1D4, p.sequenceId)
         self.assertEqual(0x00, p.controlField)
         self.assertEqual(-2, p.logMessageInterval)
@@ -130,7 +135,7 @@ class PTPv2LayerTest(unittest.TestCase):
         self.assertEqual(0x0008, p.flags)
         self.assertEqual(0x00, p.correctionField)
         self.assertEqual(0x00, p.messageTypeSpecific)
-        self.assertEqual('66:55:44:33:22:11/1', p.sourcePortIdentity)
+        self.assertEqual("66:55:44:33:22:11/1", p.sourcePortIdentity)
         self.assertEqual(0x1D4, p.sequenceId)
         self.assertEqual(0x02, p.controlField)
         self.assertEqual(-2, p.logMessageInterval)
@@ -149,7 +154,7 @@ class PTPv2LayerTest(unittest.TestCase):
         self.assertEqual(0x0008, p.flags)
         self.assertEqual(0x00, p.correctionField)
         self.assertEqual(0x00, p.messageTypeSpecific)
-        self.assertEqual('66:55:44:33:22:12/1', p.sourcePortIdentity)
+        self.assertEqual("66:55:44:33:22:12/1", p.sourcePortIdentity)
         self.assertEqual(0x1D4, p.sequenceId)
         self.assertEqual(0x05, p.controlField)
         self.assertEqual(-2, p.logMessageInterval)
@@ -168,12 +173,12 @@ class PTPv2LayerTest(unittest.TestCase):
         self.assertEqual(0x0208, p.flags)
         self.assertEqual(0x00, p.correctionField)
         self.assertEqual(0x00, p.messageTypeSpecific)
-        self.assertEqual('66:55:44:33:22:11/1', p.sourcePortIdentity)
+        self.assertEqual("66:55:44:33:22:11/1", p.sourcePortIdentity)
         self.assertEqual(0x1D4, p.sequenceId)
         self.assertEqual(0x05, p.controlField)
         self.assertEqual(127, p.logMessageInterval)
         self.assertEqual(1.000000002, p.requestReceiptTimestamp)
-        self.assertEqual('66:55:44:33:22:12/1', p.requestingPortIdentity)
+        self.assertEqual("66:55:44:33:22:12/1", p.requestingPortIdentity)
 
     def test_dissect_pdelay_resp_followup_message(self):
         p = PTPv2(bytes(PDELAY_RESP_FOLLOW_UP_MESSAGE_TRACE))
@@ -187,14 +192,15 @@ class PTPv2LayerTest(unittest.TestCase):
         self.assertEqual(0x0008, p.flags)
         self.assertEqual(0x00, p.correctionField)
         self.assertEqual(0x00, p.messageTypeSpecific)
-        self.assertEqual('66:55:44:33:22:11/1', p.sourcePortIdentity)
+        self.assertEqual("66:55:44:33:22:11/1", p.sourcePortIdentity)
         self.assertEqual(0x1D4, p.sequenceId)
         self.assertEqual(0x05, p.controlField)
         self.assertEqual(127, p.logMessageInterval)
         self.assertEqual(1.000000002, p.responseOriginTimestamp)
-        self.assertEqual('66:55:44:33:22:12/1', p.requestingPortIdentity)
+        self.assertEqual("66:55:44:33:22:12/1", p.requestingPortIdentity)
 
     def test_layer_binding_to_ethernet(self):
+        # fmt: off
         capture = bytes([
             0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e, 0x70, 0xb3,
             0xd5, 0x69, 0x90, 0x5d, 0x88, 0xf7, 0x10, 0x02,
@@ -205,11 +211,13 @@ class PTPv2LayerTest(unittest.TestCase):
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x36, 0x77, 0x9a, 0x92, 0xc9, 0x32,
         ])
+        # fmt: on
         packet = Ether(capture)
         self.assertIsInstance(packet[PTPv2], PTPv2)
         self.assertEqual(0x2C, packet[PTPv2].messageLength)
 
     def test_layer_binding_to_ethernet_pdelay_resp(self):
+        # fmt: off
         capture = bytes([
             0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e, 0x70, 0xb3,
             0xd5, 0x69, 0x90, 0x5d, 0x88, 0xf7, 0x13, 0x02,
@@ -221,9 +229,10 @@ class PTPv2LayerTest(unittest.TestCase):
             0x9d, 0x4d, 0x7c, 0xfc, 0x3c, 0xff, 0xfe, 0x00,
             0x00, 0x01, 0x00, 0x01, 0xba, 0x7f, 0xc6, 0x2f,
         ])
+        # fmt: on
         packet = Ether(capture)
         packet.show()
         self.assertIsInstance(packet[PTPv2], PTPv2)
         self.assertEqual(0x36, packet[PTPv2].messageLength)
         self.assertEqual(1602135835.727293261, packet[PTPv2].requestReceiptTimestamp)
-        self.assertEqual('7c:fc:3c:00:00:01/1', packet[PTPv2].requestingPortIdentity)
+        self.assertEqual("7c:fc:3c:00:00:01/1", packet[PTPv2].requestingPortIdentity)

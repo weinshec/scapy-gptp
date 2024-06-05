@@ -1,5 +1,9 @@
 import struct
-from scapy.fields import XStrFixedLenField, BitField
+
+from scapy.fields import (
+    BitField,
+    XStrFixedLenField,
+)
 
 
 class TimestampField(BitField):
@@ -38,7 +42,7 @@ class PortIdentityField(XStrFixedLenField):
             int(mac_bytes[3], 16),
             int(mac_bytes[4], 16),
             int(mac_bytes[5], 16),
-            port
+            port,
         )
 
     def __init__(self, name, default):
@@ -48,7 +52,9 @@ class PortIdentityField(XStrFixedLenField):
         if val is None:
             return "None"
         p = struct.unpack(self.encoding, val)
-        return f"{p[0]:02x}:{p[1]:02x}:{p[2]:02x}:{p[5]:02x}:{p[6]:02x}:{p[7]:02x}/{p[8]}"
+        return (
+            f"{p[0]:02x}:{p[1]:02x}:{p[2]:02x}:{p[5]:02x}:{p[6]:02x}:{p[7]:02x}/{p[8]}"
+        )
 
     def i2repr(self, pkt, x):
         return self.i2h(pkt, x)
