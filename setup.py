@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import setup
 
 ROOT_DIR = Path(os.path.join(os.path.dirname(__file__)))
-PACKAGE_VERSION = f'{0}.{1}.{0}'
+PACKAGE_VERSION = f'{1}.{0}.{0}'
 
 
 def readme():

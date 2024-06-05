@@ -25,42 +25,49 @@ class PTPv2(Packet):
     ]
 
     fields_desc = [
-        BitField("transportSpecific", 1, 4),
+        BitField("majorSdoId", 1, 4),
         BitEnumField("messageType", 0, 4, MSG_TYPES),
-        XBitField("reserved0", 0, 4),
+        XBitField("minorVersionPTP", 0, 4),
         BitField("versionPTP", 0x2, 4),
         ShortField("messageLength", 34),
         ByteField("domainNumber", 0),
-        XByteField("reserved1", 0),
+        XByteField("minorSdoId", 0),
         FlagsField("flags", 0, 16, FLAGS),
         LongField("correctionField", 0),
-        XIntField("reserved2", 0),
+        XIntField("messageTypeSpecific", 0),
         PortIdentityField("sourcePortIdentity", 0),
         ShortField("sequenceId", 0),
-        XByteField("control", 0),
+        XByteField("controlField", 0),
         SignedByteField("logMessageInterval", -3),
 
-        # Sync
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_sync),
+        # Sync (twoStep flag set) or PdelayReq
+        ConditionalField(
+            BitField("reserved", 0, 80),
+            lambda pkt: (pkt.is_sync and pkt.has_twostepflag_set) or pkt.is_pdelay_req),
+
+        # Sync (twoStep flag not set)
+        ConditionalField(TimestampField("originTimestamp", 0), lambda pkt: pkt.is_sync and not pkt.has_twostepflag_set),
 
         # FollowUp
         ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt: pkt.is_followup),
-        ConditionalField(XStrFixedLenField("informationTlv", 0, 32), lambda pkt: pkt.is_followup),
+
+        # Sync (twoStep flag not set) or FollowUp
+        ConditionalField(
+            XStrFixedLenField("informationTlv", 0, 32),
+            lambda pkt: (pkt.is_sync and not pkt.has_twostepflag_set) or pkt.is_followup),
 
         # PdelayReq
-        ConditionalField(BitField("reserved3", 0, 80), lambda pkt: pkt.is_pdelay_req),
-        ConditionalField(BitField("reserved4", 0, 80), lambda pkt: pkt.is_pdelay_req),
+        ConditionalField(BitField("reserved2", 0, 80), lambda pkt: pkt.is_pdelay_req),
 
         # PdelayResp
         ConditionalField(
-            TimestampField("requestReceiptTimestamp", 0),
-            lambda pkt: pkt.is_pdelay_resp),
+            TimestampField("requestReceiptTimestamp", 0), lambda pkt: pkt.is_pdelay_resp),
 
         # PdelayRespFollowUp
         ConditionalField(
-            TimestampField("responseOriginTimestamp", 0),
-            lambda pkt:pkt.is_pdelay_resp_followup),
+            TimestampField("responseOriginTimestamp", 0), lambda pkt:pkt.is_pdelay_resp_followup),
 
+        # PdelayResp or PdelayRespFollowUp
         ConditionalField(
             PortIdentityField("requestingPortIdentity", 0),
             lambda pkt: pkt.is_pdelay_resp or pkt.is_pdelay_resp_followup),
@@ -85,6 +92,10 @@ class PTPv2(Packet):
     @property
     def is_pdelay_resp_followup(self):
         return(self.messageType == 0xA)
+
+    @property
+    def has_twostepflag_set(self):
+        return("TWO_STEP" in self.flags)
 
     def extract_padding(self, s):
         return "", s
