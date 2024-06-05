@@ -1,5 +1,0 @@
-coverage
-pycodestyle
-pytest
-scapy[basic]
-tox
