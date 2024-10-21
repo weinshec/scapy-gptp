@@ -35,7 +35,7 @@ class PTPv2(Packet):
         FlagsField("flags", 0, 16, FLAGS),
         LongField("correctionField", 0),
         XIntField("messageTypeSpecific", 0),
-        PortIdentityField("sourcePortIdentity", 0),
+        PortIdentityField("sourcePortIdentity", None),
         ShortField("sequenceId", 0),
         XByteField("controlField", 0),
         SignedByteField("logMessageInterval", -3),
