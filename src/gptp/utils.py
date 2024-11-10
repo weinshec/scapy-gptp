@@ -27,7 +27,7 @@ class MatchedList:
         self.add(packets)
 
     def add(self, pkt):
-        if type(pkt) == PTPv2:
+        if type(pkt) is PTPv2:
             self._add_dispatch(pkt)
         elif iter(pkt):
             for p in pkt:

@@ -1,5 +1,5 @@
 import unittest
-from scapy.layers.l2 import Ether, Dot1Q
+from scapy.layers.l2 import Ether
 
 from gptp.layers import PTPv2
 
