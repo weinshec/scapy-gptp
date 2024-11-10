@@ -1,5 +1,17 @@
-from scapy.fields import BitEnumField, BitField, ByteField, ConditionalField, FlagsField, \
-        LongField, ShortField, SignedByteField, XBitField, XByteField, XIntField, XStrFixedLenField
+from scapy.fields import (
+    BitEnumField,
+    BitField,
+    ByteField,
+    ConditionalField,
+    FlagsField,
+    LongField,
+    ShortField,
+    SignedByteField,
+    XBitField,
+    XByteField,
+    XIntField,
+    XStrFixedLenField,
+)
 from scapy.layers.l2 import Ether
 from scapy.packet import Packet, bind_layers
 
@@ -18,10 +30,22 @@ class PTPv2(Packet):
     }
 
     FLAGS = [
-        "LI61", "LI59", "UTC_REASONABLE", "TIMESCALE",
-        "TIME_TRACEABLE", "FREQUENCY_TRACEABLE", "?", "?",
-        "ALTERNATE_MASTER", "TWO_STEP", "UNICAST", "?",
-        "?", "profileSpecific1", "profileSpecific2", "SECURITY",
+        "LI61",
+        "LI59",
+        "UTC_REASONABLE",
+        "TIMESCALE",
+        "TIME_TRACEABLE",
+        "FREQUENCY_TRACEABLE",
+        "?",
+        "?",
+        "ALTERNATE_MASTER",
+        "TWO_STEP",
+        "UNICAST",
+        "?",
+        "?",
+        "profileSpecific1",
+        "profileSpecific2",
+        "SECURITY",
     ]
 
     fields_desc = [
@@ -39,63 +63,67 @@ class PTPv2(Packet):
         ShortField("sequenceId", 0),
         XByteField("controlField", 0),
         SignedByteField("logMessageInterval", -3),
-
         # Sync (twoStep flag set) or PdelayReq
         ConditionalField(
             BitField("reserved", 0, 80),
-            lambda pkt: (pkt.is_sync and pkt.has_twostepflag_set) or pkt.is_pdelay_req),
-
+            lambda pkt: (pkt.is_sync and pkt.has_twostepflag_set) or pkt.is_pdelay_req,
+        ),
         # Sync (twoStep flag not set)
-        ConditionalField(TimestampField("originTimestamp", 0), lambda pkt: pkt.is_sync and not pkt.has_twostepflag_set),
-
+        ConditionalField(
+            TimestampField("originTimestamp", 0),
+            lambda pkt: pkt.is_sync and not pkt.has_twostepflag_set,
+        ),
         # FollowUp
-        ConditionalField(TimestampField("preciseOriginTimestamp", 0), lambda pkt: pkt.is_followup),
-
+        ConditionalField(
+            TimestampField("preciseOriginTimestamp", 0), lambda pkt: pkt.is_followup
+        ),
         # Sync (twoStep flag not set) or FollowUp
         ConditionalField(
             XStrFixedLenField("informationTlv", 0, 32),
-            lambda pkt: (pkt.is_sync and not pkt.has_twostepflag_set) or pkt.is_followup),
-
+            lambda pkt: (pkt.is_sync and not pkt.has_twostepflag_set)
+            or pkt.is_followup,
+        ),
         # PdelayReq
         ConditionalField(BitField("reserved2", 0, 80), lambda pkt: pkt.is_pdelay_req),
-
         # PdelayResp
         ConditionalField(
-            TimestampField("requestReceiptTimestamp", 0), lambda pkt: pkt.is_pdelay_resp),
-
+            TimestampField("requestReceiptTimestamp", 0), lambda pkt: pkt.is_pdelay_resp
+        ),
         # PdelayRespFollowUp
         ConditionalField(
-            TimestampField("responseOriginTimestamp", 0), lambda pkt:pkt.is_pdelay_resp_followup),
-
+            TimestampField("responseOriginTimestamp", 0),
+            lambda pkt: pkt.is_pdelay_resp_followup,
+        ),
         # PdelayResp or PdelayRespFollowUp
         ConditionalField(
             PortIdentityField("requestingPortIdentity", 0),
-            lambda pkt: pkt.is_pdelay_resp or pkt.is_pdelay_resp_followup),
+            lambda pkt: pkt.is_pdelay_resp or pkt.is_pdelay_resp_followup,
+        ),
     ]
 
     @property
     def is_sync(self):
-        return(self.messageType == 0x0)
+        return self.messageType == 0x0
 
     @property
     def is_followup(self):
-        return(self.messageType == 0x8)
+        return self.messageType == 0x8
 
     @property
     def is_pdelay_req(self):
-        return(self.messageType == 0x2)
+        return self.messageType == 0x2
 
     @property
     def is_pdelay_resp(self):
-        return(self.messageType == 0x3)
+        return self.messageType == 0x3
 
     @property
     def is_pdelay_resp_followup(self):
-        return(self.messageType == 0xA)
+        return self.messageType == 0xA
 
     @property
     def has_twostepflag_set(self):
-        return("TWO_STEP" in self.flags)
+        return "TWO_STEP" in self.flags
 
     def extract_padding(self, s):
         return "", s
