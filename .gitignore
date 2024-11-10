@@ -2,4 +2,4 @@
 __pycache__
 .tox
 .coverage
-
+.python-version

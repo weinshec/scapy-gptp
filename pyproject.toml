@@ -1,0 +1,43 @@
+[project]
+name = "scapy-gptp"
+version = "0.1.0"
+description = "scapy layer definition and tools for GPTP (IEEE 802.1as)"
+authors = [
+    { name = "Christoph Weinsheimer", email = "weinshec@holodeck2.de" }
+]
+license = "GPL-2.0"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["scapy", "PTP", "gPTP", "802.1as"]
+requires-python = ">=3.9"
+dependencies = [
+    "scapy>=2.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/weinshec/scapy-gptp"
+Repository = "https://github.com/weinshec/scapy-gptp"
+Issues = "https://github.com/weinshec/scapy-gptp/issues"
+
+[tool.uv]
+dev-dependencies = [
+    "mypy>=1.13.0",
+    "pytest>=8.3.3",
+    "ruff>=0.7.3",
+]
+
+[tool.uv.sources]
+gptp = { path = "gptp" }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gptp"]
