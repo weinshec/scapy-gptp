@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from gptp.layers import PTPv2
 from gptp.utils import MatchedList
 from scapy.utils import rdpcap
 
