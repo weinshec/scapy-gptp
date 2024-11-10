@@ -15,19 +15,34 @@ fup_p1_seq24 = PTPv2(messageType=0x8, sourcePortIdentity=portId1, sequenceId=24)
 
 pdreq_p2_seq25 = PTPv2(messageType=0x2, sourcePortIdentity=portId2, sequenceId=25)
 pdresp_p1_seq25 = PTPv2(
-    messageType=0x3, sourcePortIdentity=portId1, sequenceId=25, requestingPortIdentity=portId2)
+    messageType=0x3,
+    sourcePortIdentity=portId1,
+    sequenceId=25,
+    requestingPortIdentity=portId2,
+)
 pdrespfup_p1_seq25 = PTPv2(
-    messageType=0xA, sourcePortIdentity=portId1, sequenceId=25, requestingPortIdentity=portId2)
+    messageType=0xA,
+    sourcePortIdentity=portId1,
+    sequenceId=25,
+    requestingPortIdentity=portId2,
+)
 
 pdreq_p2_seq26 = PTPv2(messageType=0x2, sourcePortIdentity=portId2, sequenceId=26)
 pdresp_p1_seq26 = PTPv2(
-    messageType=0x3, sourcePortIdentity=portId1, sequenceId=26, requestingPortIdentity=portId2)
+    messageType=0x3,
+    sourcePortIdentity=portId1,
+    sequenceId=26,
+    requestingPortIdentity=portId2,
+)
 pdrespfup_p1_seq26 = PTPv2(
-    messageType=0xA, sourcePortIdentity=portId1, sequenceId=26, requestingPortIdentity=portId2)
+    messageType=0xA,
+    sourcePortIdentity=portId1,
+    sequenceId=26,
+    requestingPortIdentity=portId2,
+)
 
 
 class MatchedListTest(unittest.TestCase):
-
     def test_finds_matching_sync_and_followup_messages(self):
         with self.subTest("adding single packets"):
             matcher = MatchedList()
@@ -58,14 +73,16 @@ class MatchedListTest(unittest.TestCase):
 
         with self.subTest("wrong order"):
             matcher = MatchedList()
-            matcher.add([
-                pdreq_p2_seq26,
-                pdresp_p1_seq25,
-                pdrespfup_p1_seq25,
-                pdrespfup_p1_seq26,
-                pdresp_p1_seq26,
-                pdreq_p2_seq25
-            ])
+            matcher.add(
+                [
+                    pdreq_p2_seq26,
+                    pdresp_p1_seq25,
+                    pdrespfup_p1_seq25,
+                    pdrespfup_p1_seq26,
+                    pdresp_p1_seq26,
+                    pdreq_p2_seq25,
+                ]
+            )
             self.assertEqual(2, len(matcher.pdelay))
 
     def test_initialization_with_iterable(self):
