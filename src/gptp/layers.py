@@ -79,7 +79,7 @@ class PTPv2(Packet):
         ),
         # Sync (twoStep flag not set) or FollowUp
         ConditionalField(
-            XStrFixedLenField("informationTlv", 0, 32),
+            XStrFixedLenField("informationTlv", bytes(32), 32),
             lambda pkt: (pkt.is_sync and not pkt.has_twostepflag_set)
             or pkt.is_followup,
         ),
