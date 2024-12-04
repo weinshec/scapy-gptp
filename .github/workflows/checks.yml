@@ -20,10 +20,11 @@ jobs:
     - name: Setup Python
       run: |
         uv python install
+        uv sync --all-extras --dev
 
-    - name: Run black
+    - name: Run ruff format
       run: |
-        uv run black --check .
+        uv run ruff format --check
 
   check-job:
     name: Checks (python-${{ matrix.python-version }})
@@ -44,7 +45,9 @@ jobs:
         version: "0.5.3"
 
     - name: Setup Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
+      run: |
+        uv python install ${{ matrix.python-version }}
+        uv sync --all-extras --dev
 
     - name: Run pytest
       run: |
@@ -54,6 +57,6 @@ jobs:
       run: |
         uv run mypy .
 
-    - name: Run ruff
+    - name: Run ruff check
       run: |
-        uv run ruff check .
+        uv run ruff check
