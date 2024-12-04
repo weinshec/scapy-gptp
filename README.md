@@ -1,5 +1,10 @@
 # scapy-gptp - scapy layer definition and tools for GPTP (IEEE 802.1as)
 
+![PyPI - Version](https://img.shields.io/pypi/v/scapy-gptp)
+![PyPI - License](https://img.shields.io/pypi/l/scapy-gptp)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scapy-gptp)
+
+
 This python module contains the layer definition for PTPv2 (GPTP) which includes custom
 definitions for `Timestamp` and `ClockIdentity` fields. It further provide some handy utils when
 analyzing PTPv2 traces.
