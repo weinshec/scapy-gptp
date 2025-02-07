@@ -1,6 +1,6 @@
 [project]
 name = "scapy-gptp"
-version = "0.2.0"
+version = "0.2.1"
 description = "scapy layer definition and tools for GPTP (IEEE 802.1as)"
 authors = [
     { name = "Christoph Weinsheimer", email = "weinshec@holodeck2.de" }
