@@ -40,4 +40,4 @@ build-backend = "hatchling.build"
 packages = ["src/gptp"]
 
 [tool.hatch.build.targets.sdist]
-packages = ["src/gptp"]
+include = ["src/gptp"]
