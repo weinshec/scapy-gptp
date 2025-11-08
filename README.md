@@ -4,6 +4,10 @@
 ![PyPI - License](https://img.shields.io/pypi/l/scapy-gptp)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/scapy-gptp)
 
+---
+> [!IMPORTANT]
+> Development of **this repository has been migrated** to [Codeberg](https://codeberg.org/weinshec/scapy-gptp). Please update your remotes accordingly.
+---
 
 This python module contains the layer definition for PTPv2 (GPTP) which includes custom
 definitions for `Timestamp` and `ClockIdentity` fields. It further provide some handy utils when
